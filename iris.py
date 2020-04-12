@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
 import numpy as np
-import matplotlib as plt
+import matplotlib.pyplot as plt
+from scipy.stats import norm
+import seaborn as sns
 
 #The iris task
 
@@ -97,6 +99,19 @@ def confusion_matrix(predictions, actual_class, features):
         confusion[actual_class[i]][predictions[i]] += 1
     return confusion.T
 
+def print_histogram(data):
+    sns.distplot(data[:,0],kde=True,norm_hist=True)
+    sns.distplot(data[:,1],kde=True)
+    sns.distplot(data[:,2],kde=True)
+    sns.distplot(data[:,3],kde=True)
+    title = "Histogram of four different flower features"
+    plt.title(title)
+    labels = 'Feature 1','Feature 2','Feature 3','Feature 4'
+    plt.legend(labels)
+    plt.show()
+    plt.savefig('histogram.png')
+
+
 if __name__ == '__main__':
 
     iterations = 100000
@@ -106,7 +121,7 @@ if __name__ == '__main__':
     W, mse_values = train(x[:90], t[:90], alpha, iterations)
     predictions = predict(W,x[90:])
     trueclass = np.argmax(t[90:], axis=1)
-
+    print_histogram(x)
     confusion = confusion_matrix(predictions,trueclass,4)
     print("With 30 samples training and 20 for testing we get")
     print("correct guesses: ",100*np.sum(predictions == trueclass) / predictions.size, "%")
