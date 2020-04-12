@@ -108,8 +108,8 @@ def print_histogram(data):
     plt.title(title)
     labels = 'Feature 1','Feature 2','Feature 3','Feature 4'
     plt.legend(labels)
-    plt.show()
     plt.savefig('histogram.png')
+    plt.show()
 
 
 if __name__ == '__main__':
