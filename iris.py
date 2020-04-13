@@ -2,7 +2,6 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.stats import norm
 import seaborn as sns
 
 #The iris task
@@ -74,7 +73,7 @@ def train(x, t, alpha, iterations):
     W - weight matrix,
     g - output vector,
     '''
-    W = np.zeros((3,4))
+    W = np.zeros((3,x.shape[1]))
     mse_values = []
     for i in range(iterations):
         g = sigmoid(np.dot(x,W.T))
@@ -85,7 +84,6 @@ def train(x, t, alpha, iterations):
 def predict(W,x):
     g = np.dot(x, W.T)
     return np.argmax(sigmoid(g), axis=1)
-
 
 def confusion_matrix(predictions, actual_class, features):
     '''
@@ -99,30 +97,40 @@ def confusion_matrix(predictions, actual_class, features):
         confusion[actual_class[i]][predictions[i]] += 1
     return confusion.T
 
-def print_histogram(data):
-    sns.distplot(data[:,0],kde=True,norm_hist=True)
-    sns.distplot(data[:,1],kde=True)
-    sns.distplot(data[:,2],kde=True)
-    sns.distplot(data[:,3],kde=True)
-    title = "Histogram of four different flower features"
-    plt.title(title)
-    labels = 'Feature 1','Feature 2','Feature 3','Feature 4'
-    plt.legend(labels)
-    plt.savefig('histogram.png')
+def print_histogram():
+    data = get_x()
+    j = 0
+    for i in range(1,4):
+        plt.figure(i)
+        sns.distplot(data[50*j:50*i,0],kde=True,norm_hist=True)
+        sns.distplot(data[50*j:50*i,1],kde=True,norm_hist=True)
+        sns.distplot(data[50*j:50*i,2],kde=True,norm_hist=True)
+        sns.distplot(data[50*j:50*i,3],kde=True,norm_hist=True)
+        labels = 'Feature 1','Feature 2','Feature 3','Feature 4'
+        title = "Histogram of four different flower features for class " +  str(i) 
+        plt.legend(labels)
+        plt.title(title)
+        plt.savefig('histogram' + str(i) + '.png')
+        j+=1
     plt.show()
 
+def plot_mse(iterations, mse_values, mse_values2):
+    plt.figure(4)
+    plt.title("Alpha = 0.04 leads to fluctuations in the MSE.\n Alpha = 0.1 is much smoother")
+    steps = list(range(iterations))
+    plt.plot(steps, mse_values, steps, mse_values2)
+    labels = "alpha = 0.01", "alpha = 0.04"
+    plt.legend(labels)
+    plt.ylim(0, 0.5)
+    plt.savefig("mse_values.png")
+    plt.show()
 
-if __name__ == '__main__':
-
-    iterations = 100000
-    alpha = 0.01
-    x,t = get_data()
-
+def problem1(x,t,alpha, iterations):
     W, mse_values = train(x[:90], t[:90], alpha, iterations)
+    print(W)
     predictions = predict(W,x[90:])
     trueclass = np.argmax(t[90:], axis=1)
-    print_histogram(x)
-    confusion = confusion_matrix(predictions,trueclass,4)
+    confusion = confusion_matrix(predictions,trueclass,3)
     print("With 30 samples training and 20 for testing we get")
     print("correct guesses: ",100*np.sum(predictions == trueclass) / predictions.size, "%")
     print("Minimum mean-squared error obtained: ",mse_values[len(mse_values) -1])
@@ -132,10 +140,57 @@ if __name__ == '__main__':
     predictions = predict(W,x[:60])
     trueclass = np.argmax(t[:60], axis=1)
 
-    confusion = confusion_matrix(predictions,trueclass,4)
-    print("With 20 samples training and 30 for testing we get")
+    confusion = confusion_matrix(predictions,trueclass,3)
+    print("With last 30 samples training and first 20 for testing we get")
+    print("correct guesses: ",100*np.sum(predictions == trueclass) / predictions.size, "%")
+    print("Minimum mean-squared error obtained: ",mse_values[len(mse_values) -1])
+    print("confusion matrix:\n",confusion)
+
+    #W2, mse_values2 = train(x[:90], t[:90], 0.04, iterations)
+    #plot_mse(iterations,mse_values, mse_values2)
+
+
+
+def problem2(x,t,alpha,iterations):
+    x = np.delete(x, 1, axis=1)    
+    W, mse_values = train(x[:90], t[:90], alpha, iterations)
+    predictions = predict(W,x[90:])
+    trueclass = np.argmax(t[90:], axis=1)
+    confusion = confusion_matrix(predictions,trueclass,3)
+    print("\nProblem 2\n\nRemoved 1 feature")
+    print("correct guesses: ",100*np.sum(predictions == trueclass) / predictions.size, "%")
+    print("Minimum mean-squared error obtained: ",mse_values[len(mse_values) -1])
+    print("confusion matrix:\n",confusion)
+
+    x = np.delete(x, 2, axis=1)    
+    W, mse_values = train(x[:90], t[:90], alpha, iterations)
+    predictions = predict(W,x[90:])
+    trueclass = np.argmax(t[90:], axis=1)
+    confusion = confusion_matrix(predictions,trueclass,3)
+    print("\nRemoved 2 features")
+    print("correct guesses: ",100*np.sum(predictions == trueclass) / predictions.size, "%")
+    print("Minimum mean-squared error obtained: ",mse_values[len(mse_values) -1])
+    print("confusion matrix:\n",confusion)
+
+    x = np.delete(x, 0, axis=1)   
+    W, mse_values = train(x[:90], t[:90], alpha, iterations)
+    predictions = predict(W,x[90:])
+    trueclass = np.argmax(t[90:], axis=1)
+    confusion = confusion_matrix(predictions,trueclass,3)
+    print("\nRemoved 3 features")
     print("correct guesses: ",100*np.sum(predictions == trueclass) / predictions.size, "%")
     print("Minimum mean-squared error obtained: ",mse_values[len(mse_values) -1])
     print("confusion matrix:\n",confusion)
 
 
+
+if __name__ == '__main__':
+    iterations = 2500
+    alpha = 0.005
+    x,t = get_data()
+    
+    
+    #print_histogram()
+
+    problem1(x,t,alpha,iterations)
+    problem2(x,t,alpha,iterations)
