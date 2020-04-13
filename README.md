@@ -23,11 +23,11 @@ confusion matrix:
  [ 0.  1. 20.]]  
 
 
-![alt text](https://raw.githubusercontent.com/mariusud/Classification-project/master/mse_values.png){:height="36px" width="36px"} 
+![alt text](https://raw.githubusercontent.com/mariusud/Classification-project/master/mse_values.png)
 ### Problem 2
 ![alt text](https://raw.githubusercontent.com/mariusud/Classification-project/master/histogram1.png)
 ![alt text](https://raw.githubusercontent.com/mariusud/Classification-project/master/histogram2.png )
-![alt text](https://raw.githubusercontent.com/mariusud/Classification-project/master/histogram3.png ){:height="36px" width="36px"}
+![alt text](https://raw.githubusercontent.com/mariusud/Classification-project/master/histogram3.png )
 
 Removed 1 feature  
 correct guesses:  95.0 %  
