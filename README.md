@@ -22,6 +22,8 @@ confusion matrix:
  [ 0. 19.  0.]  
  [ 0.  1. 20.]]  
 
+
+![alt text](https://raw.githubusercontent.com/mariusud/Classification-project/master/mse_values.png)
 ### Problem 2
 
 Removed 1 feature  
