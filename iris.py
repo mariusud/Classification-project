@@ -39,6 +39,9 @@ def get_t():
     return t_updated
 
 def get_data(edit_order=True):
+    '''
+    Returns data from the dataset in mixed or correct order
+    '''
     x = get_x()
     t = get_t()
     if edit_order:
