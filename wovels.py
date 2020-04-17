@@ -255,4 +255,5 @@ def problem_2(data,classname):
 
 if __name__ == '__main__':
     data, classname = get_data()
-    problem_2(data,classname)
+    problem_1(data,classname)
+    #problem_2(data,classname)
