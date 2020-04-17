@@ -235,13 +235,23 @@ def problem_1(data,classname):
     diagonal_model.prediction_accuracy()
 
 def problem_2(data,classname):
-    gmm = GaussianMixture_model(data,classname,3)
-    gmm.train()
-    gmm.predict()
-    gmm.train_accuracy()
-    gmm.prediction_accuracy()
-    training_confusion = gmm.confusion_matrix(gmm.predicted_train,gmm.true_train,12)
-    print(training_confusion)
+    gmm3 = GaussianMixture_model(data,classname,3)
+    gmm2 = GaussianMixture_model(data,classname,2)
+
+    gmm2.train()
+    gmm2.predict()
+    gmm2.train_accuracy()
+    gmm2.prediction_accuracy()
+    training_confusion_gmm2 = gmm2.confusion_matrix(gmm2.predicted_train,gmm2.true_train,12)
+    print(training_confusion_gmm2)
+
+    gmm3.train()
+    gmm3.predict()
+    gmm3.train_accuracy()
+    gmm3.prediction_accuracy()
+    training_confusion_gmm3 = gmm3.confusion_matrix(gmm3.predicted_train,gmm3.true_train,12)
+    print(training_confusion_gmm3)
+
 
 if __name__ == '__main__':
     data, classname = get_data()
