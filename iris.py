@@ -27,7 +27,10 @@ def get_x():
     f = open('./iris_dataset/iris.data')
     x = np.loadtxt(f,delimiter=',',usecols=(0,1,2,3))
     f.close()
-    return x
+    #[x^T 1]^T -> x
+    x_new = np.ones([np.size(x,0),np.size(x,1)+1])
+    x_new[:,:-1] = x
+    return x_new
 
 def get_t():
     f = open('./iris_dataset/iris.data')
@@ -103,14 +106,15 @@ def confusion_matrix(predictions, actual_class, features):
 def print_confusion(conf):
     """
     Creates a latex table that is pre-formatted for a given confusion matrix.
+    stolen from https://github.com/kristeey/TTT4275_EDC
     """
     classes = ['1', '2', '3']
 
 
     print("""\\begin{table}[H]
-\\caption{}
-\\centering
-\\begin{tabular}{|c|lll|}""")
+    \\caption{}
+    \\centering
+    \\begin{tabular}{|c|lll|}""")
     conf = conf.astype(int)
     print('\\hline\nclass & '+' & '.join(classes) + '\\\\' + '\\hline')
     for i, row in enumerate(conf):
@@ -126,25 +130,22 @@ def print_confusion(conf):
             rw += '\\hline'
         print(rw)
     print("""\\end{tabular}
-\\end{table}""")
+    \\end{table}""")
     print()
 
 def print_histogram():
     data = get_x()
-    j = 0
-    for i in range(1,4):
+    for i in range(0,4):
         plt.figure(i)
-        sns.distplot(data[50*j:50*i,0],kde=True,norm_hist=True)
-        sns.distplot(data[50*j:50*i,1],kde=True,norm_hist=True)
-        sns.distplot(data[50*j:50*i,2],kde=True,norm_hist=True)
-        sns.distplot(data[50*j:50*i,3],kde=True,norm_hist=True)
-        labels = 'Feature 1','Feature 2','Feature 3','Feature 4'
-        title = "Histogram of four different flower features for class " +  str(i) 
+        for j in range(0,3):
+            sns.distplot(data[50*j:50*(j+1),i],kde=True,norm_hist=True)
+        labels = 'Class 1','Class 2','Class 3'
+        title = "Histogram of different classes for feature " +  str(i+1)
         plt.legend(labels)
-        plt.title(title)
-        plt.savefig('./figures/histogram' + str(i) + '.png')
-        j+=1
+        plt.title(title) 
+        plt.savefig('./figures/histogram' + str(i+1) + '.png')
     plt.show()
+
 
 def plot_mse(iterations, mse_values, mse_values2):
     plt.figure(4)
@@ -159,6 +160,7 @@ def plot_mse(iterations, mse_values, mse_values2):
 
 def problem1(x,t,alpha, iterations):
     W, mse_values = train(x[:90], t[:90], alpha, iterations)
+    print("Problem 1\n W= \n", W)
     predictions = predict(W,x[90:])
     train_values = predict(W,x[:90])
     trueclass = np.argmax(t[90:], axis=1)
@@ -215,9 +217,9 @@ def problem2(x,t,alpha,iterations):
     print("correct guesses: ",100*np.sum(predictions == trueclass) / predictions.size, "%")
     print("Minimum mean-squared error obtained: ",mse_values[len(mse_values) -1])
     print("confusion matrix for test set:\n",confusion_test)
-    print_confusion(confusion_test)
+    #print_confusion(confusion_test)
     print("confusion matrix for training set:\n",confusion_train)
-    print_confusion(confusion_train)
+    #print_confusion(confusion_train)
 
     #Remove another feature
     x = np.delete(x, 2, axis=1)    
@@ -233,9 +235,9 @@ def problem2(x,t,alpha,iterations):
     print("correct guesses: ",100*np.sum(predictions == trueclass) / predictions.size, "%")
     print("Minimum mean-squared error obtained: ",mse_values[len(mse_values) -1])
     print("confusion matrix for test set:\n",confusion_test)
-    print_confusion(confusion_test)
+    #print_confusion(confusion_test)
     print("confusion matrix for training set:\n",confusion_train)
-    print_confusion(confusion_train)
+    #print_confusion(confusion_train)
 
     #Remove third feature
     x = np.delete(x, 0, axis=1)   
@@ -251,18 +253,16 @@ def problem2(x,t,alpha,iterations):
     print("correct guesses: ",100*np.sum(predictions == trueclass) / predictions.size, "%")
     print("Minimum mean-squared error obtained: ",mse_values[len(mse_values) -1])
     print("confusion matrix for test set:\n",confusion_test)
-    print_confusion(confusion_test)
+    #print_confusion(confusion_test)
     print("confusion matrix for training set:\n",confusion_train)
-    print_confusion(confusion_train)
-
+    #print_confusion(confusion_train)
 
 if __name__ == '__main__':
     iterations = 4000
     alpha = 0.001
     x,t = get_data()
     
-    
-    #print_histogram()
+    print_histogram()
 
-    #problem1(x,t,alpha,iterations)
+    problem1(x,t,alpha,iterations)
     problem2(x,t,alpha,iterations)
