@@ -1,5 +1,5 @@
 # Classification-project
-Classification of Flowers and handwritten numbers, for the course TT4275
+Classification of Flowers and handwritten numbers, for the course TTT4275
 
 
 ## Part 1 - Iris recognizition
