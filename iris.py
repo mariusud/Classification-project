@@ -27,7 +27,10 @@ def get_x():
     f = open('./iris_dataset/iris.data')
     x = np.loadtxt(f,delimiter=',',usecols=(0,1,2,3))
     f.close()
-    return x
+    #[x^T 1]^T -> x
+    x_new = np.ones([np.size(x,0),np.size(x,1)+1])
+    x_new[:,:-1] = x
+    return x_new
 
 def get_t():
     f = open('./iris_dataset/iris.data')
@@ -98,7 +101,7 @@ def confusion_matrix(predictions, actual_class, features):
     confusion = np.zeros((features, features))
     for i in range(len(predictions)):
         confusion[actual_class[i]][predictions[i]] += 1
-    return confusion.T
+    return confusion
 
 def print_histogram():
     data = get_x()
@@ -117,9 +120,25 @@ def print_histogram():
         j+=1
     plt.show()
 
+def print_histogram2():
+    data = get_x()
+    j = 0
+    for i in range(0,4):
+        plt.figure(i)
+        for j in range(0,3):
+            sns.distplot(data[50*j:50*(j+1),i],kde=True,norm_hist=True)
+        labels = 'Class 1','Class 2','CLass 3'
+        title = "Histogram of different classes for feature " +  str(i+1)
+        plt.legend(labels)
+        plt.title(title) 
+
+        #plt.savefig('histogram' + str(i) + '.png')
+    plt.show()
+
+
 def plot_mse(iterations, mse_values, mse_values2):
     plt.figure(4)
-    plt.title("Alpha = 0.04 leads to fluctuations in the MSE.\n Alpha = 0.1 is much smoother")
+    plt.title("Alpha = 0.04 leads to fluctuations in the MSE.\n Alpha = 0.01 is much smoother")
     steps = list(range(iterations))
     plt.plot(steps, mse_values, steps, mse_values2)
     labels = "alpha = 0.01", "alpha = 0.04"
@@ -130,7 +149,7 @@ def plot_mse(iterations, mse_values, mse_values2):
 
 def problem1(x,t,alpha, iterations):
     W, mse_values = train(x[:90], t[:90], alpha, iterations)
-    print(W)
+    print("Problem 1\n W= \n", W)
     predictions = predict(W,x[90:])
     trueclass = np.argmax(t[90:], axis=1)
     confusion = confusion_matrix(predictions,trueclass,3)
@@ -186,13 +205,12 @@ def problem2(x,t,alpha,iterations):
     print("confusion matrix:\n",confusion)
 
 
-
 if __name__ == '__main__':
     iterations = 2500
     alpha = 0.005
     x,t = get_data()
     
-    
+    #print_histogram2()
     #print_histogram()
 
     problem1(x,t,alpha,iterations)
