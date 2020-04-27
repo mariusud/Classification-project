@@ -3,6 +3,7 @@ import numpy as np
 from scipy.stats import multivariate_normal
 from sklearn.mixture import GaussianMixture
 
+
 def get_data():
     '''
     Returns data from the dataset
@@ -73,6 +74,7 @@ class Gaussian_model():
         Model based on scipy's multivariate_normal
         '''
         probability_distribution = np.zeros((12,self.x_train.shape[0]))
+        probability_distribution_test = np.zeros((12,self.x_test.shape[0]))
         for i, vowel in enumerate(self.vowels):
             vowel_indeces = find_indeces(vowel,self.y_train) 
             vowel_samples = self.x_train[vowel_indeces]
@@ -81,10 +83,14 @@ class Gaussian_model():
             if self.diagonal:
                 sample_covariance = np.diag(np.diag(sample_covariance))
             self.rv = multivariate_normal(mean=sample_mean,cov=sample_covariance)
-            probability_distribution[i] = self.rv.pdf(self.x_train)
+            probability_distribution[i] = self.rv.pdf(self.x_train)*(1/12)
+            probability_distribution_test[i] = self.rv.pdf(self.x_test)*(1/12)
 
         self.predicted_train = np.argmax(probability_distribution, axis=0)
         self.true_train = np.asarray([i for i in range(12) for _ in range(70)])
+
+        self.predicted_test = np.argmax(probability_distribution_test, axis=0)
+        self.true_test = np.asarray([i for i in range(12) for _ in range(69)])
 
     def train_accuracy(self):
         print("Model accuracy for training set: ",np.sum(self.predicted_train==self.true_train)/len(self.predicted_train))
@@ -103,12 +109,14 @@ class Gaussian_model():
                 sample_covariance = np.diag(np.diag(sample_covariance))
             self.rv = multivariate_normal(mean=sample_mean,cov=sample_covariance)
             probability_distribution[i] = self.rv.pdf(self.x_test)
-
         self.predicted_test = np.argmax(probability_distribution, axis=0)
         self.true_test = np.asarray([i for i in range(12) for _ in range(69)])
 
     def prediction_accuracy(self):
         print("Model accuracy for testing set: ",np.sum(self.predicted_test==self.true_test)/len(self.predicted_test))
+
+    def print_error_rate(self):
+        print("Estimated error rate for testing set: ",(1-np.sum(self.predicted_test==self.true_test)/len(self.predicted_test))*100, "%")
 
     def confusion_matrix(self, predictions, actual_class, features):
         '''
@@ -120,7 +128,7 @@ class Gaussian_model():
         confusion = np.zeros((features, features))
         for i in range(len(predictions)):
             confusion[actual_class[i]][predictions[i]] += 1
-        return confusion.T     
+        return confusion  
 
 
 class GaussianMixture_model():
@@ -195,6 +203,9 @@ class GaussianMixture_model():
 
     def prediction_accuracy(self):
         print("Model accuracy for testing set: ",np.sum(self.predicted_test==self.true_test)/len(self.predicted_test))
+    
+    def print_error_rate(self):
+        print("Estimated error rate for testing set: ",(1-np.sum(self.predicted_test==self.true_test)/len(self.predicted_test))*100, "%")
 
     def confusion_matrix(self, predictions, actual_class, features):
         '''
@@ -208,52 +219,99 @@ class GaussianMixture_model():
             confusion[actual_class[i]][predictions[i]] += 1
         return confusion.T     
 
+def print_confusion(conf):
+    """
+    Creates a latex table that is pre-formatted for a given confusion matrix.
+    stolen from https://github.com/kristeey/TTT4275_EDC
+    """
+    classes = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']
+
+
+    print("""\\begin{table}[H]
+    \\caption{}
+    \\centering
+    \\scalebox{0.6}{
+    \\begin{tabular}{|c|llllllllllll|}""")
+    conf = conf.astype(int)
+    print('\\hline\nclass & '+' & '.join(classes) + '\\\\' + '\\hline')
+    for i, row in enumerate(conf):
+        rw = classes[i]
+        for j, elem in enumerate(row):
+            rw += ' & '
+            if elem == 0:
+                rw += '-'
+            else:
+                rw += str(elem)
+        rw += '\\\\'
+        if i == 11:
+            rw += '\\hline'
+        print(rw)
+    print("""\\end{tabular}}
+    \\end{table}""")
+    print()
+
 def problem_1(data,classname):
     model = Gaussian_model(data,classname)
     model.train()
-    model.predict()
+    #model.predict()
 
 
-    training_confusion = model.confusion_matrix(model.predicted_train,model.true_train,12)
+    #training_confusion = model.confusion_matrix(model.predicted_train,model.true_train,12)
     testing_confusion = model.confusion_matrix(model.predicted_test,model.true_test,12)
-    print(training_confusion)
+    #print(training_confusion)
+    model.print_error_rate()
     print(testing_confusion)
+    print_confusion(testing_confusion)
 
-    model.train_accuracy()
-    model.prediction_accuracy()
+    #model.train_accuracy()
+    #model.prediction_accuracy()
 
     print("\ndiagonal model\n")
     diagonal_model = Gaussian_model(data,classname,True)
     diagonal_model.train()
-    diagonal_model.predict()
+    #diagonal_model.predict()
 
-    diag_training_confusion = diagonal_model.confusion_matrix(diagonal_model.predicted_train,diagonal_model.true_train,12)
+    #diag_training_confusion = diagonal_model.confusion_matrix(diagonal_model.predicted_train,diagonal_model.true_train,12)
     diag_testing_confusion = diagonal_model.confusion_matrix(diagonal_model.predicted_test,diagonal_model.true_test,12)
-    print(diag_training_confusion)
+    #print(diag_training_confusion)
+    diagonal_model.print_error_rate()
     print(diag_testing_confusion)
-    diagonal_model.train_accuracy()
-    diagonal_model.prediction_accuracy()
+    print_confusion(diag_testing_confusion)
+    
+    #diagonal_model.train_accuracy()
+    #diagonal_model.prediction_accuracy()
 
 def problem_2(data,classname):
-    gmm3 = GaussianMixture_model(data,classname,3)
     gmm2 = GaussianMixture_model(data,classname,2)
+    gmm3 = GaussianMixture_model(data,classname,3)
 
     gmm2.train()
     gmm2.predict()
-    gmm2.train_accuracy()
-    gmm2.prediction_accuracy()
-    training_confusion_gmm2 = gmm2.confusion_matrix(gmm2.predicted_train,gmm2.true_train,12)
-    print(training_confusion_gmm2)
+    #training_confusion_gmm2 = gmm2.confusion_matrix(gmm2.predicted_train,gmm2.true_train,12)
+    test_confusion_gmm2 = gmm2.confusion_matrix(gmm2.predicted_test,gmm2.true_test,12)
+
+
+    print("GMM using 2 gaussians: ")
+    gmm2.print_error_rate()
+    print("confusion matrix:\n", test_confusion_gmm2)
+    print_confusion(test_confusion_gmm2)
+    #gmm2.train_accuracy()
+    #gmm2.prediction_accuracy()
 
     gmm3.train()
     gmm3.predict()
-    gmm3.train_accuracy()
-    gmm3.prediction_accuracy()
-    training_confusion_gmm3 = gmm3.confusion_matrix(gmm3.predicted_train,gmm3.true_train,12)
-    print(training_confusion_gmm3)
+    test_confusion_gmm3 = gmm3.confusion_matrix(gmm3.predicted_test,gmm2.true_test,12)
+
+    print("GMM using 3 gaussians: ")
+    gmm3.print_error_rate()
+    print("confusion matrix:\n", test_confusion_gmm3)
+    print_confusion(test_confusion_gmm3)
+    #gmm3.train_accuracy()
+    #gmm3.prediction_accuracy()
+
 
 
 if __name__ == '__main__':
     data, classname = get_data()
-    problem_1(data,classname)
-    #problem_2(data,classname)
+    #problem_1(data,classname)
+    problem_2(data,classname)
