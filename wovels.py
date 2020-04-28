@@ -217,7 +217,7 @@ class GaussianMixture_model():
         confusion = np.zeros((features, features))
         for i in range(len(predictions)):
             confusion[actual_class[i]][predictions[i]] += 1
-        return confusion.T     
+        return confusion     
 
 def print_confusion(conf):
     """
@@ -309,7 +309,7 @@ def problem_2(data,classname):
     #gmm3.train_accuracy()
     #gmm3.prediction_accuracy()
 
-
+    
 
 if __name__ == '__main__':
     data, classname = get_data()
