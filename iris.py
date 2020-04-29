@@ -146,13 +146,12 @@ def print_histogram():
         plt.savefig('./figures/histogram' + str(i+1) + '.png')
     plt.show()
 
-
-def plot_mse(iterations, mse_values, mse_values2):
+def plot_mse(iterations, mse_values, mse_values2, mse_values3):
     plt.figure(4)
     plt.title("Alpha = 0.04 leads to fluctuations in the MSE.\n Alpha = 0.01 is much smoother")
     steps = list(range(iterations))
-    plt.plot(steps, mse_values, steps, mse_values2)
-    labels = "alpha = 0.01", "alpha = 0.04"
+    plt.plot(steps, mse_values3, steps, mse_values2, steps, mse_values)
+    labels = "alpha = 0.05", "alpha = 0.01", "alpha = 0.04"
     plt.legend(labels)
     plt.ylim(0, 0.5)
     plt.savefig("./figures/mse_values.png")
@@ -195,10 +194,9 @@ def problem1(x,t,alpha, iterations):
     print("confusion matrix for training set:\n",confusion_train)
     print_confusion(confusion_train)
 
-    W2, mse_values2 = train(x[:90], t[:90], 0.04, iterations)
-    plot_mse(iterations,mse_values, mse_values2)
-
-
+    W2, mse_values2 = train(x[:90], t[:90], 0.05, iterations)
+    W3, mse_values3 = train(x[:90], t[:90], 0.1, iterations)
+    plot_mse(iterations,mse_values, mse_values2,mse_values3)
 
 def problem2(x,t,alpha,iterations):
     #Remove first feature
@@ -258,11 +256,11 @@ def problem2(x,t,alpha,iterations):
     #print_confusion(confusion_train)
 
 if __name__ == '__main__':
-    iterations = 4000
+    iterations = 2500
     alpha = 0.001
     x,t = get_data()
     
-    print_histogram()
+    #print_histogram()
 
     problem1(x,t,alpha,iterations)
-    problem2(x,t,alpha,iterations)
+    #problem2(x,t,alpha,iterations)

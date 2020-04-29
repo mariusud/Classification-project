@@ -3,6 +3,7 @@ import numpy as np
 from scipy.stats import multivariate_normal
 from sklearn.mixture import GaussianMixture
 
+
 def get_data():
     '''
     Returns data from the dataset
