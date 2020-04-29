@@ -174,7 +174,6 @@ def problem1(x,t,alpha, iterations):
     confusion_train = confusion_matrix(train_values,trueclass_train,3)
 
     print("With 30 samples training and 20 for testing we get")
-    #print("correct guesses: ",100*np.sum(predictions == trueclass) / predictions.size, "%")
     print("Minimum mean-squared error obtained: ",mse_values[len(mse_values) -1])
     print("For the test set: ")
     print_error_rate(predictions, trueclass)
@@ -184,8 +183,6 @@ def problem1(x,t,alpha, iterations):
     print_error_rate(train_values, trueclass_train)
     print("confusion matrix:\n",confusion_train)
     print_confusion(confusion_train)
-
-
 
     W, mse_values = train(x[60:], t[60:], alpha, iterations)
     predictions = predict(W,x[:60])
@@ -196,7 +193,6 @@ def problem1(x,t,alpha, iterations):
     confusion_train = confusion_matrix(train_values,trueclass_train,3)
 
     print("With last 30 samples training and first 20 for testing we get")
-    #print("correct guesses: ",100*np.sum(predictions == trueclass) / predictions.size, "%")
     print("Minimum mean-squared error obtained: ",mse_values[len(mse_values) -1])
     print("For the test set: ")
     print_error_rate(predictions, trueclass)
@@ -207,6 +203,7 @@ def problem1(x,t,alpha, iterations):
     print("confusion matrix:\n",confusion_train)
     print_confusion(confusion_train)
 
+    #Testing different alpha's to plot MSE
     W2, mse_values2 = train(x[:90], t[:90], 0.02, iterations)
     W3, mse_values3 = train(x[:90], t[:90], 0.05, iterations)
     plot_mse(iterations,mse_values, mse_values2, mse_values3)
@@ -219,19 +216,13 @@ def problem2(x,t,alpha,iterations):
     trueclass = np.argmax(t[90:], axis=1)
     train_values = predict(W,x[:90])
     trueclass_train = np.argmax(t[:90], axis=1)
-
-
     confusion_test = confusion_matrix(predictions,trueclass,3)
     confusion_train = confusion_matrix(train_values,trueclass_train,3)
 
     print("\nProblem 2\n\nRemoved 1 feature")
-    #print("correct guesses: ",100*np.sum(predictions == trueclass) / predictions.size, "%")
     print_error_rate(predictions, trueclass)
     print("Minimum mean-squared error obtained: ",mse_values[len(mse_values) -1])
     print("confusion matrix for test set:\n",confusion_test)
-    #print_confusion(confusion_test)
-    #print("confusion matrix for training set:\n",confusion_train)
-    #print_confusion(confusion_train)
 
     #Remove another feature
     x = np.delete(x, 2, axis=1)    
@@ -244,13 +235,9 @@ def problem2(x,t,alpha,iterations):
     confusion_train = confusion_matrix(train_values,trueclass_train,3)
 
     print("\nRemoved 2 features")
-    #print("correct guesses: ",100*np.sum(predictions == trueclass) / predictions.size, "%")
     print_error_rate(predictions, trueclass)
     print("Minimum mean-squared error obtained: ",mse_values[len(mse_values) -1])
     print("confusion matrix for test set:\n",confusion_test)
-    #print_confusion(confusion_test)
-    #print("confusion matrix for training set:\n",confusion_train)
-    #print_confusion(confusion_train)
 
     #Remove third feature
     x = np.delete(x, 0, axis=1)   
@@ -263,20 +250,16 @@ def problem2(x,t,alpha,iterations):
     confusion_train = confusion_matrix(train_values,trueclass_train,3)
 
     print("\nRemoved 3 features")
-    #print("correct guesses: ",100*np.sum(predictions == trueclass) / predictions.size, "%")
     print_error_rate(predictions, trueclass)
     print("Minimum mean-squared error obtained: ",mse_values[len(mse_values) -1])
     print("confusion matrix for test set:\n",confusion_test)
-    #print_confusion(confusion_test)
     print("confusion matrix for training set:\n",confusion_train)
-    #print_confusion(confusion_train)
 
 if __name__ == '__main__':
     iterations = 2000
     alpha = 0.005
     x,t = get_data()
     
-    #print_histogram()
-
+    print_histogram()
     problem1(x,t,alpha,iterations)
-    #problem2(x,t,alpha,iterations)
+    problem2(x,t,alpha,iterations)
