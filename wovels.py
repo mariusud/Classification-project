@@ -208,37 +208,6 @@ class GaussianMixture_model():
             confusion[actual_class[i]][predictions[i]] += 1
         return confusion     
 
-def print_confusion(conf):
-    """
-    Creates a latex table that is pre-formatted for a given confusion matrix.
-    stolen from https://github.com/kristeey/TTT4275_EDC
-    """
-    classes = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']
-
-
-    print("""\\begin{table}[H]
-    \\caption{}
-    \\centering
-    \\scalebox{0.6}{
-    \\begin{tabular}{|c|llllllllllll|}""")
-    conf = conf.astype(int)
-    print('\\hline\nclass & '+' & '.join(classes) + '\\\\' + '\\hline')
-    for i, row in enumerate(conf):
-        rw = classes[i]
-        for j, elem in enumerate(row):
-            rw += ' & '
-            if elem == 0:
-                rw += '-'
-            else:
-                rw += str(elem)
-        rw += '\\\\'
-        if i == 11:
-            rw += '\\hline'
-        print(rw)
-    print("""\\end{tabular}}
-    \\end{table}""")
-    print()
-
 def problem_1(data,classname):
     model = Gaussian_model(data,classname)
     model.train()

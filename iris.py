@@ -103,36 +103,6 @@ def confusion_matrix(predictions, actual_class, features):
         confusion[actual_class[i]][predictions[i]] += 1
     return confusion
 
-def print_confusion(conf):
-    """
-    Creates a latex table that is pre-formatted for a given confusion matrix.
-    stolen from https://github.com/kristeey/TTT4275_EDC
-    """
-    classes = ['1', '2', '3']
-
-
-    print("""\\begin{table}[H]
-    \\caption{}
-    \\centering
-    \\begin{tabular}{|c|lll|}""")
-    conf = conf.astype(int)
-    print('\\hline\nclass & '+' & '.join(classes) + '\\\\' + '\\hline')
-    for i, row in enumerate(conf):
-        rw = classes[i]
-        for j, elem in enumerate(row):
-            rw += ' & '
-            if elem == 0:
-                rw += '-'
-            else:
-                rw += str(elem)
-        rw += '\\\\'
-        if i == 2:
-            rw += '\\hline'
-        print(rw)
-    print("""\\end{tabular}
-    \\end{table}""")
-    print()
-
 def print_histogram():
     data = get_x()
     for i in range(0,4):
@@ -178,11 +148,9 @@ def problem1(x,t,alpha, iterations):
     print("For the test set: ")
     print_error_rate(predictions, trueclass)
     print("confusion matrix:\n",confusion_test)
-    print_confusion(confusion_test)
     print("For the training set: ")
     print_error_rate(train_values, trueclass_train)
     print("confusion matrix:\n",confusion_train)
-    print_confusion(confusion_train)
 
     W, mse_values = train(x[60:], t[60:], alpha, iterations)
     predictions = predict(W,x[:60])
@@ -197,11 +165,9 @@ def problem1(x,t,alpha, iterations):
     print("For the test set: ")
     print_error_rate(predictions, trueclass)
     print("confusion matrix:\n",confusion_test)
-    print_confusion(confusion_test)
     print("For the training set: ")
     print_error_rate(train_values, trueclass_train)
     print("confusion matrix:\n",confusion_train)
-    print_confusion(confusion_train)
 
     #Testing different alpha's to plot MSE
     W2, mse_values2 = train(x[:90], t[:90], 0.02, iterations)
