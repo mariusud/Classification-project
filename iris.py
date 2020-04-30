@@ -256,7 +256,7 @@ def problem2(x,t,alpha,iterations):
     print("confusion matrix for training set:\n",confusion_train)
 
 if __name__ == '__main__':
-    iterations = 2000
+    iterations = 2500
     alpha = 0.005
     x,t = get_data()
     
